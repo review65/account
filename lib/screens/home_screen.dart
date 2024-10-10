@@ -1,4 +1,6 @@
 import 'package:account/provider/transaction_provider.dart';
+import 'package:account/screens/edit_screen.dart';
+import 'package:account/screens/edit_screen.dart.bak';
 import 'package:account/screens/form_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -30,8 +32,6 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         body: Consumer(
           builder: (context, TransactionProvider provider, Widget? child) {
-            // สร้าง index จาก keyID
-            // index = provider.transactions['keyID'];
             if (provider.transactions.isEmpty) {
               return const Center(
                 child: Text('ไม่มีรายการ'),
@@ -61,6 +61,16 @@ class _HomeScreenState extends State<HomeScreen> {
                           provider.deleteTransaction(statement.keyID);
                         },
                       ),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) {
+                              return EditScreen(statement: statement);
+                            },
+                          ),
+                        );
+                      },
                     ),
                   );
                 },

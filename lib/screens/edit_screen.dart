@@ -1,20 +1,21 @@
 import 'package:account/main.dart';
 import 'package:account/models/transactions.dart';
-
+import 'package:account/provider/transaction_provider.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:account/provider/transaction_provider.dart';
 
-class FormScreen extends StatefulWidget {
+class EditScreen extends StatefulWidget {
 
+  Transactions statement;
 
-  const FormScreen({super.key});
+  EditScreen({super.key, required this.statement});
 
   @override
-  State<FormScreen> createState() => _FormScreenState();
+  State<EditScreen> createState() => _EditScreenState();
 }
 
-class _FormScreenState extends State<FormScreen> {
+class _EditScreenState extends State<EditScreen> {
   final formKey = GlobalKey<FormState>();
 
   final titleController = TextEditingController();
@@ -23,10 +24,11 @@ class _FormScreenState extends State<FormScreen> {
 
   @override
   Widget build(BuildContext context) {
-  
+    titleController.text = widget.statement.title;
+    amountController.text = widget.statement.amount.toString();
     return Scaffold(
         appBar: AppBar(
-          title: const Text('แบบฟอร์มเพิ่มข้อมูล'),
+          title: const Text('แบบฟอร์มแก้ไขข้อมูล'),
         ),
         body: Form(
             key: formKey,
@@ -62,13 +64,13 @@ class _FormScreenState extends State<FormScreen> {
                   },
                 ),
                 TextButton(
-                    child: const Text('บันทึก'),
+                    child: const Text('แก้ไขข้อมูล'),
                     onPressed: () {
                           if (formKey.currentState!.validate())
                             {
                               // create transaction data object
                               var statement = Transactions(
-                                  keyID: null,
+                                  keyID: widget.statement.keyID,
                                   title: titleController.text,
                                   amount: double.parse(amountController.text),
                                   date: DateTime.now()
@@ -77,7 +79,7 @@ class _FormScreenState extends State<FormScreen> {
                               // add transaction data object to provider
                               var provider = Provider.of<TransactionProvider>(context, listen: false);
                               
-                              provider.addTransaction(statement);
+                              provider.updateTransaction(statement);
 
                               Navigator.push(context, MaterialPageRoute(
                                 fullscreenDialog: true,

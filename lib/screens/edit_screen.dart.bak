@@ -1,20 +1,19 @@
 import 'package:account/main.dart';
 import 'package:account/models/transactions.dart';
-
+import 'package:account/provider/transaction_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:account/provider/transaction_provider.dart';
+import 'package:sembast/sembast.dart'; 
 
-class FormScreen extends StatefulWidget {
-
-
-  const FormScreen({super.key});
+class FormEditScreen extends StatefulWidget {
+  Transactions data;
+  FormEditScreen({super.key, required this.data});
 
   @override
-  State<FormScreen> createState() => _FormScreenState();
+  State<FormEditScreen> createState() => _FormEditScreenState();
 }
 
-class _FormScreenState extends State<FormScreen> {
+class _FormEditScreenState extends State<FormEditScreen> {
   final formKey = GlobalKey<FormState>();
 
   final titleController = TextEditingController();
@@ -22,11 +21,19 @@ class _FormScreenState extends State<FormScreen> {
   final amountController = TextEditingController();
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    titleController.text = widget.data.title;
+    amountController.text = widget.data.amount.toString();
+  }
+  @override
   Widget build(BuildContext context) {
-  
+    
+    
     return Scaffold(
         appBar: AppBar(
-          title: const Text('แบบฟอร์มเพิ่มข้อมูล'),
+          title: const Text('แบบฟอร์มแก้ไขข้อมูล'),
         ),
         body: Form(
             key: formKey,
@@ -68,7 +75,7 @@ class _FormScreenState extends State<FormScreen> {
                             {
                               // create transaction data object
                               var statement = Transactions(
-                                  keyID: null,
+                                  keyID: widget.data.keyID,
                                   title: titleController.text,
                                   amount: double.parse(amountController.text),
                                   date: DateTime.now()
@@ -77,7 +84,7 @@ class _FormScreenState extends State<FormScreen> {
                               // add transaction data object to provider
                               var provider = Provider.of<TransactionProvider>(context, listen: false);
                               
-                              provider.addTransaction(statement);
+                              provider.updateTransaction(statement);
 
                               Navigator.push(context, MaterialPageRoute(
                                 fullscreenDialog: true,
