@@ -1,42 +1,45 @@
-import 'package:account/databases/transaction_db.dart';
 import 'package:flutter/foundation.dart';
+import 'package:account/databases/transaction_db.dart';
 import 'package:account/models/transactions.dart';
 
 class TransactionProvider with ChangeNotifier {
-  List<Transactions> transactions = [];
+  List<KpopBand> transactions = [];
 
-  List<Transactions> getTransaction() {
+  List<KpopBand> getTransaction() {
     return transactions;
   }
 
-  void initData() async{
-    var db = await TransactionDB(dbName: 'transactions.db');
-    this.transactions = await db.loadAllData();
-    print(this.transactions);
+  void initData() async {
+    var db = TransactionDB(dbName: 'transactions.db');
+    transactions = await db.loadAllData();
+    print('Loaded transactions: ${transactions.length}'); // Debug log
+    
     notifyListeners();
   }
 
-  void addTransaction(Transactions transaction) async{
-    var db = await TransactionDB(dbName: 'transactions.db');
-    var keyID = await db.insertDatabase(transaction);
-    this.transactions = await db.loadAllData();
-    print(this.transactions);
-    notifyListeners();
+  Future<void> addTransaction(KpopBand transaction) async {
+    var db = TransactionDB(dbName: 'transactions.db');
+    await db.insertDatabase(transaction);
+    
+    transactions = await db.loadAllData();
+    print('Loaded transactions: ${transactions.length}'); // Debug log
+    notifyListeners(); // อัปเดต UI
+
   }
 
-  void deleteTransaction(int? index) async{
-    print('delete index: $index');
-    var db = await TransactionDB(dbName: 'transactions.db');
+  void deleteTransaction(int? index) async {
+    var db = TransactionDB(dbName: 'transactions.db');
     await db.deleteDatabase(index);
-    this.transactions = await db.loadAllData();
-    notifyListeners(); 
+    transactions = await db.loadAllData();
+    print('Loaded transactions: ${transactions.length}'); // Debug log
+    notifyListeners();
   }
 
-  void updateTransaction(Transactions transaction) async{
-    // print('update index: ${transaction.keyID}');
-    var db = await TransactionDB(dbName: 'transactions.db');
+  void updateTransaction(KpopBand transaction) async {
+    var db = TransactionDB(dbName: 'transactions.db');
     await db.updateDatabase(transaction);
-    this.transactions = await db.loadAllData();
+    transactions = await db.loadAllData();
+    print('Loaded transactions: ${transactions.length}'); // Debug log
     notifyListeners();
   }
 }
